@@ -8,7 +8,8 @@ const requestProxy = require('express-request-proxy'); // REVIEW: We've added a 
 const PORT = process.env.PORT || 3000;
 const app = express();
 // const conString = 'postgres://USERNAME:PASSWORD@HOST:PORT';
-const conString = process.env.DATABASE_URL; // DONE: Don't forget to set your own conString
+const conString = process.env.DATABASE_URL || 'postgres://postgres:1234@localhost:5432/kilovolt';
+// DONE: Don't forget to set your own conString
 const client = new pg.Client(conString);
 client.connect();
 client.on('error', err => console.error(err));
@@ -19,7 +20,7 @@ app.use(express.static('./public'));
 
 
 // COMMENT: What is this function doing? Why do we need it? Where does it receive a request from?
-// (put your response in a comment here)
+// This function is creating middleware for validation from the github token and is being called from the repos.js line 11.
 function proxyGitHub(request, response) {
   console.log('Routing GitHub request for', request.params[0]);
   (requestProxy({
@@ -30,7 +31,7 @@ function proxyGitHub(request, response) {
 
 
 // COMMENT: What is this route doing? Where does it receive a request from?
-// (put your response in a comment here)
+// (The app.get/new is requesting the new.html page from the public folder. The app.get/admin is requesting the admin.html from public.The app.get/github is requesting the access to the github page for all authorized files through the proxyGitHub function above which is called in Repo.js.)
 app.get('/new', (request, response) => response.sendFile('new.html', {root: './public'}));
 app.get('/admin', (request, response) => response.sendFile('admin.html', {root: './public'}));
 app.get('/github/*', proxyGitHub);
@@ -107,7 +108,7 @@ app.post('/articles', function(request, response) {
 
 
 // COMMENT: What is this route doing? Where does it receive a request from?
-// (put your response in a comment here)
+// (This route is requesting to load an update to a specific article based on it's :id which is contected to the author_id and it is receiving it's request from the client.query.)
 app.put('/articles/:id', (request, response) => {
   client.query(`
     UPDATE authors
