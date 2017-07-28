@@ -5,7 +5,7 @@ var app = app || {};
   const aboutController = {};
 
   // COMMENT: What is this function doing? Where is it called? Does it call any other functions, and if so, in what file(s) do those function(s) live?
-  // (put your response in a comment here)
+  // (This function is hiding the 'About' content and is calling repoView.index from the 'repoView.js' file.)
   aboutController.index = () => {
     $('#about').show().siblings().hide();
     app.repos.requestRepos(app.repoView.index);
